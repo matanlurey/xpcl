@@ -49,3 +49,53 @@ Here are a couple of apps or games I want to be able to implement in `example`:
 - [ ] Jedi Duel
 - [ ] Pong
 - [ ] Game of Life
+
+## Concept
+
+For example, "Casino War".
+
+```dart
+import 'package:meta/meta.dart';
+import 'package:xpcl/xpcl.dart';
+
+void main() {
+  run(
+    App(
+      initialState: Table(
+        wallet: 100,
+        deck: buildInitialDeck(),
+        discard: BuiltList(),
+      ),
+    ),
+  );
+}
+
+class Game extends Scaffold<Table> {
+  const Game();
+
+  @override
+  Signal on(Surface surface, State table) {
+    return surface.parseInput(
+      'You have \$${table.wallet}. How much to bet? (0=EXIT):',
+      Input.positiveIntegerOrZero,
+      (int toBet) {
+        if (table.wallet < toBet) {
+          return surface.displayError('Not enough $').thenRepeat();
+        } else {
+          final turn = _drawHand(table);
+          return surface.thenEnter(Hand(), turn);
+        }
+      }
+    );
+  }
+
+  static Turn _drawHand(Table table) {
+    final deck = table.deck.toBuilder();
+    return Turn(
+      table.update(deck: deck.build()),
+      player: deck.removeLast(),
+      dealer: deck.removeLast(),
+    )
+  }
+}
+```

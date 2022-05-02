@@ -10,4 +10,5 @@ environment:
 dev_dependencies:
   lints: ^1.0.0
 dependencies: 
+  built_collection: ^5.1.1
   meta: ^1.7.0
